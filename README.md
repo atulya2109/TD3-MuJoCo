@@ -2,6 +2,10 @@
 
 Deep reinforcement learning implementation for MuJoCo environments, specifically trained on Humanoid-v5.
 
+## Demo
+
+![Demo Video](videos/ddpg_Humanoid-v5_20251230_013218-episode-0.mp4)
+
 ## Project Evolution
 
 This project started with a Deep Deterministic Policy Gradient (DDPG) implementation. However, stability issues were encountered during training - the agent struggled to learn consistently and performance was unreliable.

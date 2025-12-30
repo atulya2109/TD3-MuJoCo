@@ -2,6 +2,7 @@
 checkpoints/
 runs/
 videos/
+!videos/ddpg_Humanoid-v5_20251230_013218-episode-0.mp4
 
 # Python
 __pycache__/
