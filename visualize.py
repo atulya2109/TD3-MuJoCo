@@ -7,7 +7,10 @@ from lib.agent import DDPGAgent
 from wrapppers import HumanoidPDWrapper
 
 # Set MuJoCo rendering backend to avoid OpenGL context issues on macOS
-os.environ['MUJOCO_GL'] = 'osmesa'
+# Try different backends in order of preference
+if 'MUJOCO_GL' not in os.environ:
+    # For macOS, 'egl' usually works better than 'osmesa'
+    os.environ['MUJOCO_GL'] = 'egl'
 
 
 def visualize_agent(
