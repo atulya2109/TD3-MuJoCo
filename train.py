@@ -132,10 +132,7 @@ def train_ddpg(
         # Calculate elapsed time
         elapsed_hours = (time.time() - start_time) / 3600
 
-        writer.add_scalar("Reward/Total_Reward", episode_reward, episode)
-        writer.add_scalar("Reward/Mean_Reward_Per_Step", mean_reward, episode)
         writer.add_scalar("Reward/Avg_Total_Reward_100", avg_total_reward, episode)
-        writer.add_scalar("Reward/Avg_Mean_Reward_100", avg_mean_reward, episode)
         writer.add_scalar("Training/Time_Hours", elapsed_hours, episode)
 
         if training_steps > 0:
