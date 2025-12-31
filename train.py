@@ -9,6 +9,8 @@ from datetime import datetime
 
 from lib.agent import DDPGAgent
 
+from wrapppers import HumanoidPDWrapper
+
 
 def train_ddpg(
     env_name="Humanoid-v5",
@@ -23,6 +25,8 @@ def train_ddpg(
 ):
     # Create environment
     env = gym.make(env_name)
+    env = HumanoidPDWrapper(env, kp=15.0, kd=1.5, action_scale=0.5)
+
     assert env.observation_space.shape is not None
     assert env.action_space.shape is not None
     obs_dim = env.observation_space.shape[0]
@@ -156,14 +160,16 @@ def train_ddpg(
     hours = int(total_time // 3600)
     minutes = int((total_time % 3600) // 60)
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("TRAINING COMPLETE!")
-    print("="*60)
+    print("=" * 60)
     print(f"Total time: {hours}h {minutes}m")
     print(f"Final avg reward (100 ep): {np.mean(episode_rewards[-100:]):.2f}")
-    print(f"Best avg reward (100 ep): {max([np.mean(episode_rewards[max(0,i-99):i+1]) for i in range(len(episode_rewards))]):.2f}")
+    print(
+        f"Best avg reward (100 ep): {max([np.mean(episode_rewards[max(0,i-99):i+1]) for i in range(len(episode_rewards))]):.2f}"
+    )
     print(f"View results: tensorboard --logdir={log_dir}")
-    print("="*60)
+    print("=" * 60)
 
     return agent, episode_rewards
 
