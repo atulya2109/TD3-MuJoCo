@@ -25,7 +25,7 @@ def train_ddpg(
 ):
     # Create environment
     env = gym.make(env_name)
-    env = HumanoidPDWrapper(env, kp=15.0, kd=1.5, action_scale=0.5)
+    env = HumanoidPDWrapper(env, kp=15.0, kd=1.5)
 
     assert env.observation_space.shape is not None
     assert env.action_space.shape is not None
@@ -58,7 +58,8 @@ def train_ddpg(
     # Create checkpoint directory if it doesn't exist
     os.makedirs(checkpoint_dir, exist_ok=True)
 
-    episode_rewards = []
+    episode_rewards = []  # Mean reward per step
+    episode_total_rewards = []  # Total reward per episode
     total_steps = 0
     start_time = time.time()
 
@@ -121,13 +122,17 @@ def train_ddpg(
 
         mean_reward = episode_reward / episode_steps if episode_steps > 0 else 0.0
         episode_rewards.append(mean_reward)
-        avg_reward = np.mean(episode_rewards[-100:])  # Last 100 episodes
+        episode_total_rewards.append(episode_reward)
+        avg_mean_reward = np.mean(episode_rewards[-100:])  # Last 100 episodes
+        avg_total_reward = np.mean(episode_total_rewards[-100:])  # Last 100 episodes
 
         # Calculate elapsed time
         elapsed_hours = (time.time() - start_time) / 3600
 
-        writer.add_scalar("Mean_Reward/Hours", mean_reward, elapsed_hours)
-        writer.add_scalar("Episode/Avg_Mean_Reward_100", avg_reward, episode)
+        writer.add_scalar("Reward/Total_Reward", episode_reward, episode)
+        writer.add_scalar("Reward/Mean_Reward_Per_Step", mean_reward, episode)
+        writer.add_scalar("Reward/Avg_Total_Reward_100", avg_total_reward, episode)
+        writer.add_scalar("Reward/Avg_Mean_Reward_100", avg_mean_reward, episode)
         writer.add_scalar("Training/Time_Hours", elapsed_hours, episode)
 
         if training_steps > 0:
@@ -141,8 +146,8 @@ def train_ddpg(
         # Update progress bar
         pbar.set_postfix(
             {
-                "mean_r": f"{mean_reward:.2f}",
-                "avg_100": f"{avg_reward:.2f}",
+                "total_r": f"{episode_reward:.1f}",
+                "avg_total": f"{avg_total_reward:.1f}",
                 "hrs": f"{elapsed_hours:.2f}",
                 "buffer": f"{len(agent.buffer)//1000}k",
             }
@@ -164,9 +169,10 @@ def train_ddpg(
     print("TRAINING COMPLETE!")
     print("=" * 60)
     print(f"Total time: {hours}h {minutes}m")
-    print(f"Final avg reward (100 ep): {np.mean(episode_rewards[-100:]):.2f}")
+    print(f"Final avg total reward (100 ep): {np.mean(episode_total_rewards[-100:]):.1f}")
+    print(f"Final avg mean reward/step (100 ep): {np.mean(episode_rewards[-100:]):.2f}")
     print(
-        f"Best avg reward (100 ep): {max([np.mean(episode_rewards[max(0,i-99):i+1]) for i in range(len(episode_rewards))]):.2f}"
+        f"Best avg total reward (100 ep): {max([np.mean(episode_total_rewards[max(0,i-99):i+1]) for i in range(len(episode_total_rewards))]):.1f}"
     )
     print(f"View results: tensorboard --logdir={log_dir}")
     print("=" * 60)
