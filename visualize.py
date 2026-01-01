@@ -23,7 +23,7 @@ def visualize_agent(
         from datetime import datetime
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-        env = gym.make(env_name, render_mode="rgb_array", width=1920, height=1080)
+        env = gym.make(env_name, render_mode="rgb_array", width=1920, height=1080, camera_name="track")
         env = HumanoidPDWrapper(env, kp=0.5, kd=0.05)
         # Wrap with video recorder
         env = gym.wrappers.RecordVideo(
@@ -37,7 +37,7 @@ def visualize_agent(
         num_episodes = 1
         print(f"Recording video to: videos/ddpg_{env_name}_{timestamp}-episode-0.mp4")
     else:
-        env = gym.make(env_name, render_mode=render_mode, width=1920, height=1080)
+        env = gym.make(env_name, render_mode=render_mode, width=1920, height=1080, camera_name="track")
         env = HumanoidPDWrapper(env, kp=0.5, kd=0.05)
 
     assert env.observation_space.shape is not None
