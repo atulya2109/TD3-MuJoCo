@@ -1,4 +1,4 @@
-# DDPG-MuJoCo
+# TD3-MuJoCo
 
 Deep reinforcement learning implementation for MuJoCo environments, specifically trained on Humanoid-v5.
 
